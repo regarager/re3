@@ -1,14 +1,13 @@
 import { View } from "react-native";
-import { Page } from "../types";
 import { Text } from "react-native-paper";
-import CameraPreview from "../components/CameraPreview";
 import { styles } from "./page";
+import ImageView from "../components/ImageView";
 
 export default function Recycle() {
   return (
     <View style={styles.container}>
       <Text>Recycle</Text>
-      <CameraPreview />
+      <ImageView />
     </View>
   );
 }

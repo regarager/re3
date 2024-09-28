@@ -1,5 +1,4 @@
 import { Text, View } from "react-native";
-import { Page } from "../types";
 import { auth } from "../firebase";
 import { useState, useEffect } from "react";
 import { User } from "firebase/auth";

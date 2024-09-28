@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import CameraPreview from "./CameraPreview";
 import { Button, Text } from "react-native-paper";
+import ImageUpload from "./ImageUpload";
 
 export default function ImageView() {
   const [usingImage, setUsingImage] = useState(true); // using image upload (true) or camera false
@@ -25,7 +26,7 @@ export default function ImageView() {
   if (usingImage) {
     return (
       <View>
-        <TouchableOpacity></TouchableOpacity>
+        <ImageUpload />
         <SwitchButton />
       </View>
     );

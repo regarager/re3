@@ -1,9 +1,13 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import { BottomNavigation, PaperProvider } from "react-native-paper";
+import {
+  BottomNavigation,
+  MD3DarkTheme,
+  PaperProvider,
+} from "react-native-paper";
 import { useState } from "react";
 import Dashboard from "./pages/Dashboard";
-import Recycle from "./pages/Recycle";
+import Image from "./pages/Image";
 import Reduce from "./pages/Reduce";
 import Reuse from "./pages/Reuse";
 
@@ -12,7 +16,7 @@ export default function App() {
 
   const renderScene = BottomNavigation.SceneMap({
     dashboard: Dashboard,
-    recycle: Recycle,
+    recycle: Image,
     reduce: Reduce,
     reuse: Reuse,
   });
@@ -24,8 +28,10 @@ export default function App() {
     { key: "reuse", title: "Reuse", focusedIcon: "sync-circle" },
   ]);
 
+  const theme = MD3DarkTheme;
+
   return (
-    <PaperProvider>
+    <PaperProvider theme={theme}>
       <BottomNavigation
         navigationState={{ index, routes }}
         onIndexChange={setIndex}

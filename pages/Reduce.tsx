@@ -1,6 +1,10 @@
 import { View } from "react-native";
-import { Page } from "../types";
+import { Text } from "react-native-paper";
 
 export default function Reduce() {
-  return <View>Reduce</View>;
+  return (
+    <View>
+      <Text>Reduce</Text>
+    </View>
+  );
 }

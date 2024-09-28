@@ -1,6 +1,10 @@
 import { View } from "react-native";
-import { Page } from "../types";
+import { Text } from "react-native-paper";
 
 export default function Reuse() {
-  return <View>Reuse</View>;
+  return (
+    <View>
+      <Text>Reuse</Text>
+    </View>
+  );
 }

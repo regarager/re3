@@ -1,12 +1,13 @@
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useRef, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Button } from "react-native-paper";
+import { StyleSheet, Image, View } from "react-native";
+import { Button, IconButton, Text } from "react-native-paper";
 
 export default function CameraPreview() {
   const [facing, setFacing] = useState<CameraType>("back");
   const cameraRef = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
+  const [uri, setURI] = useState("");
 
   if (!permission) {
     return (
@@ -34,30 +35,51 @@ export default function CameraPreview() {
   }
 
   async function takePicture() {
-    const picture = await cameraRef.current?.takePictureAsync();
+    const picture = await cameraRef.current?.takePictureAsync({
+      base64: true,
+      imageType: "jpg",
+    });
 
     if (picture) {
+      // TODO: fix black image on android
+      const base64URI = `data:image/jpeg;base64,${picture.base64}`;
+      // console.log(base64URI);
       console.log(picture.base64);
+      setURI(picture.base64 ?? "");
     }
   }
 
   return (
     <View style={styles.container}>
-      <CameraView
-        ref={cameraRef}
-        style={styles.camera}
-        facing={facing}
-        mode="picture"
-      >
-        <View style={styles.buttonContainer}>
-          <Button onPress={toggleCameraFacing} icon="camera-flip">
-            <></>
-          </Button>
-        </View>
-        <Button onPress={takePicture} icon="camera">
-          <Text>Take a Picture</Text>
-        </Button>
-      </CameraView>
+      {uri.length > 0 ? (
+        <Image
+          style={styles.image}
+          source={{
+            uri: uri,
+          }}
+        />
+      ) : (
+        <CameraView
+          ref={cameraRef}
+          style={styles.camera}
+          facing={facing}
+          mode="picture"
+        >
+          <View style={styles.buttonContainer}>
+            <IconButton
+              onPress={toggleCameraFacing}
+              icon="camera-flip"
+              size={32}
+            />
+          </View>
+          <IconButton
+            onPress={takePicture}
+            icon="camera"
+            size={48}
+            style={{ alignSelf: "center" }}
+          />
+        </CameraView>
+      )}
     </View>
   );
 }
@@ -75,6 +97,10 @@ const styles = StyleSheet.create({
     height: 512,
     width: 512,
   },
+  image: {
+    width: 300,
+    height: 200,
+  },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
@@ -89,6 +115,5 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "white",
   },
 });
