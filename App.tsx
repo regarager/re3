@@ -1,14 +1,36 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import { PaperProvider } from "react-native-paper";
-import Main from "./Main";
+import { BottomNavigation, PaperProvider } from "react-native-paper";
+import { useState } from "react";
+import Dashboard from "./pages/Dashboard";
+import Recycle from "./pages/Recycle";
+import Reduce from "./pages/Reduce";
+import Reuse from "./pages/Reuse";
 
 export default function App() {
+  const [index, setIndex] = useState(0);
+
+  const renderScene = BottomNavigation.SceneMap({
+    dashboard: Dashboard,
+    recycle: Recycle,
+    reduce: Reduce,
+    reuse: Reuse,
+  });
+
+  const [routes] = useState([
+    { key: "dashboard", title: "Home", focusedIcon: "home" },
+    { key: "recycle", title: "Recycle", focusedIcon: "recycle" },
+    { key: "reduce", title: "Reduce", focusedIcon: "arrow-collapse-all" },
+    { key: "reuse", title: "Reuse", focusedIcon: "sync-circle" },
+  ]);
+
   return (
     <PaperProvider>
-      <View style={styles.container}>
-        <Main />
-      </View>
+      <BottomNavigation
+        navigationState={{ index, routes }}
+        onIndexChange={setIndex}
+        renderScene={renderScene}
+      />
     </PaperProvider>
   );
 }
@@ -19,7 +41,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
-    height: "100%",
   },
 });
