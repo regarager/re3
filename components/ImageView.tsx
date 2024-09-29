@@ -1,10 +1,16 @@
 import { useState } from "react";
-import { View } from "react-native";
-import CameraPreview from "./CameraPreview";
+import { Image, StyleSheet, View } from "react-native";
+import Camera from "./Camera";
 import { Button, Text } from "react-native-paper";
 import ImageUpload from "./ImageUpload";
 
-export default function ImageView() {
+export default function ImageView({
+  image,
+  setImage,
+}: {
+  image: string;
+  setImage: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const [usingImage, setUsingImage] = useState(true); // using image upload (true) or camera false
 
   const SwitchButton = () => {
@@ -23,19 +29,29 @@ export default function ImageView() {
     }
   };
 
+  if (image.length > 0) {
+    return <Image style={styles.image} source={{ uri: image }} />;
+  }
+
   if (usingImage) {
     return (
       <View>
-        <ImageUpload />
+        <ImageUpload setImage={setImage} />
         <SwitchButton />
       </View>
     );
   } else {
     return (
       <View>
-        <CameraPreview />
+        <Camera setImage={setImage} />
         <SwitchButton />
       </View>
     );
   }
 }
+const styles = StyleSheet.create({
+  image: {
+    width: 300,
+    height: 200,
+  },
+});

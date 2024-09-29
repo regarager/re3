@@ -1,11 +1,12 @@
-import { Image, Pressable, StyleSheet, TouchableOpacity } from "react-native";
-import { Icon } from "react-native-paper";
+import { Pressable, StyleSheet } from "react-native";
+import { Icon, MD3Colors } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
 
-export default function ImageUpload() {
-  const [uri, setURI] = useState("");
-
+export default function ImageUpload({
+  setImage,
+}: {
+  setImage: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -16,28 +17,22 @@ export default function ImageUpload() {
     if (!result.canceled) {
       const [image] = result.assets;
 
-      setURI(image.uri);
+      setImage(`data:image/jpeg;base64,${image.base64}`);
     }
   };
 
-  return uri.length > 0 ? (
-    <Image style={styles.image} source={{ uri: uri }} />
-  ) : (
+  return (
     <Pressable style={styles.container} onPress={pickImageAsync}>
       <Icon source="image" size={64} color="#665a6f" />
     </Pressable>
   );
 }
 const styles = StyleSheet.create({
-  image: {
-    width: 300,
-    height: 200,
-  },
   container: {
     display: "flex",
     width: 300,
     height: 200,
-    borderColor: "#665a6f",
+    borderColor: MD3Colors.secondary50,
     borderWidth: 4,
     borderRadius: 16,
     borderStyle: "dashed",
