@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import ImageView from "../components/ImageView";
 import { useEffect, useState } from "react";
@@ -33,7 +33,7 @@ export default function Image() {
 
   useEffect(() => {
     async function uploadImage() {
-      if (image.length == 0) return;
+      if (image.length === 0) return;
 
       try {
         const response = await fetch(
@@ -49,8 +49,6 @@ export default function Image() {
 
         if (response.ok) {
           const res = await response.text();
-
-          console.log(res);
 
           if (res.match(/[0-9a-f]+/)) {
             await fetch("http://10.0.2.2:5000/gemini", {
@@ -91,46 +89,71 @@ export default function Image() {
         body: JSON.stringify({ file: filename }),
       })
         .then((res) => res.text())
-        .then((res) => setItemType({ loaded: true, content: res }));
+        .then((res) => {
+          setItemType({ loaded: true, content: res });
+          return res;
+        })
+        .then((item) => {
+          fetch("http://10.0.2.2:5000/reduce", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              file: filename,
+              item: item,
+            }),
+          })
+            .then((res) => res.text())
+            .then((res) =>
+              setReduce({
+                loaded: true,
+                content: res
+                  .replaceAll("**", "")
+                  .replaceAll("*", "•"),
+              }),
+            );
 
-      fetch("http://10.0.2.2:5000/reduce", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          file: filename,
-          item: itemType.content,
-        }),
-      })
-        .then((res) => res.text())
-        .then((res) => setReduce({ loaded: true, content: res }));
+          fetch("http://10.0.2.2:5000/reuse", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              file: filename,
+              item: item,
+            }),
+          })
+            .then((res) => res.text())
+            .then((res) =>
+              setReuse({
+                loaded: true,
+                content: res
+                  .replaceAll("**", "")
+                  .replaceAll("*", "•"),
+              }),
+            );
 
-      fetch("http://10.0.2.2:5000/reuse", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          file: filename,
-          item: itemType.content,
-        }),
-      })
-        .then((res) => res.text())
-        .then((res) => setReuse({ loaded: true, content: res }));
-
-      fetch("http://10.0.2.2:5000/recycle", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          file: filename,
-          item: itemType.content,
-        }),
-      })
-        .then((res) => res.text())
-        .then((res) => setRecycle({ loaded: true, content: res }));
+          fetch("http://10.0.2.2:5000/recycle", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              file: filename,
+              item: item,
+            }),
+          })
+            .then((res) => res.text())
+            .then((res) =>
+              setRecycle({
+                loaded: true,
+                content: res
+                  .replaceAll("**", "")
+                  .replaceAll("*", "•"),
+              }),
+            );
+        });
     };
 
     getResponses();
@@ -162,10 +185,13 @@ export default function Image() {
     <View style={styles.container}>
       <ImageView image={image} setImage={setImage} />
       <View>
-        {image.length == 0 ? (
+        <Button icon="trash-can" onPress={clear}>
+          Clear
+        </Button>
+        {image.length === 0 ? (
           <></>
         ) : uploaded ? (
-          <>
+          <ScrollView contentContainerStyle={styles.responses}>
             <Text style={styles.title}>Type of Trash</Text>
             <Text>{itemType.loaded ? itemType.content : "..."}</Text>
             <Text style={styles.title}>Reduce</Text>
@@ -174,14 +200,11 @@ export default function Image() {
             <Text>{reuse.loaded ? reuse.content : "..."}</Text>
             <Text style={styles.title}>Recycle</Text>
             <Text>{recycle.loaded ? recycle.content : "..."}</Text>
-          </>
+          </ScrollView>
         ) : (
           <Text>Uploading image...</Text>
         )}
       </View>
-      <Button icon="trash-can" onPress={clear}>
-        Clear
-      </Button>
     </View>
   );
 }
@@ -196,5 +219,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+
+  responses: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    padding: 16,
   },
 });

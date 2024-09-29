@@ -8,7 +8,7 @@ export default function ImageUpload({
   setImage: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const pickImageAsync = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       quality: 1,
       base64: true,
@@ -17,7 +17,7 @@ export default function ImageUpload({
     if (!result.canceled) {
       const [image] = result.assets;
 
-      setImage(`data:image/jpeg;base64,${image.base64}`);
+      setImage(image.base64 ?? "");
     }
   };
 

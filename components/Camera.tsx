@@ -1,4 +1,8 @@
-import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
+import {
+  CameraView,
+  CameraType,
+  useCameraPermissions,
+} from "expo-camera";
 import { useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, IconButton, Text } from "react-native-paper";
@@ -45,7 +49,13 @@ export default function CameraPreview({
 
     if (picture) {
       // TODO: fix black image on android
-      setImage(picture.base64 ?? "");
+
+      setImage(
+        (picture.base64 ?? "").replace(
+          /^data:image\/(png|jpg);base64,/,
+          "",
+        ) ?? "",
+      );
     }
   }
 
@@ -57,7 +67,11 @@ export default function CameraPreview({
       mode="picture"
     >
       <View style={styles.buttonContainer}>
-        <IconButton onPress={toggleCameraFacing} icon="camera-flip" size={32} />
+        <IconButton
+          onPress={toggleCameraFacing}
+          icon="camera-flip"
+          size={32}
+        />
       </View>
       <IconButton
         onPress={takePicture}

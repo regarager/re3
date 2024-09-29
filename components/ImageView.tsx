@@ -12,7 +12,13 @@ export default function ImageView({
   setImage: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const [usingImage, setUsingImage] = useState(true); // using image upload (true) or camera false
-
+  function getBase64(b64: string) {
+    // Check if the string starts with "/9j/"
+    if (b64.startsWith("/9j/")) {
+      return `data:image/jpeg;base64,${b64}`;
+    }
+    return `data:image/png;base64,${b64}`; // Default to PNG
+  }
   const SwitchButton = () => {
     if (usingImage) {
       return (
@@ -20,17 +26,21 @@ export default function ImageView({
           <Text>Use Camera</Text>
         </Button>
       );
-    } else {
-      return (
-        <Button icon="upload" onPress={() => setUsingImage(true)}>
-          <Text>Upload Image</Text>
-        </Button>
-      );
     }
+    return (
+      <Button icon="upload" onPress={() => setUsingImage(true)}>
+        <Text>Upload Image</Text>
+      </Button>
+    );
   };
 
   if (image.length > 0) {
-    return <Image style={styles.image} source={{ uri: image }} />;
+    return (
+      <Image
+        style={styles.image}
+        source={{ uri: getBase64(image) }}
+      />
+    );
   }
 
   if (usingImage) {
@@ -40,14 +50,13 @@ export default function ImageView({
         <SwitchButton />
       </View>
     );
-  } else {
-    return (
-      <View>
-        <Camera setImage={setImage} />
-        <SwitchButton />
-      </View>
-    );
   }
+  return (
+    <View>
+      <Camera setImage={setImage} />
+      <SwitchButton />
+    </View>
+  );
 }
 const styles = StyleSheet.create({
   image: {

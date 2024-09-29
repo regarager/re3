@@ -42,7 +42,7 @@ generation_config = {
     "temperature": 2,
     "top_p": 0.95,
     "top_k": 64,
-    "max_output_tokens": 1024,
+    "max_output_tokens": 100,
     "response_mime_type": "text/plain",
 }
 
@@ -58,12 +58,16 @@ model = genai.GenerativeModel(
 @cross_origin()
 def upload_image():
     data = json.loads(request.data)["image"]
+    filename = uuid.uuid4().hex
+
+    if data.startswith("data:image/jpeg;base64,") or data.startswith("/9j/"):
+        filename += ".jpg"
+    else:
+        filename += ".png"
+        data += "data:image/png;base64,"
 
     # Decode the base64 string
     image_data = base64.b64decode(data)
-
-    # Generate a random filename
-    filename = uuid.uuid4().hex + ".jpg"
 
     print("Saved to " + filename, flush=True)
 
@@ -80,7 +84,12 @@ def upload_image():
 def gemini():
     filename = json.loads(request.data)["file"]
 
-    file = upload_to_gemini("uploads/" + filename, "image/jpeg")
+    file = None
+
+    if filename.endswith(".jpg"):
+        file = upload_to_gemini("uploads/" + filename, "image/jpeg")
+    else:
+        file = upload_to_gemini("uploads/" + filename, "image/png")
     filemap[filename] = model.start_chat(
         history=[
             {
@@ -91,8 +100,6 @@ def gemini():
             },
         ]
     )
-
-    print(filemap, flush=True)
 
     return "uploaded to gemini"
 
