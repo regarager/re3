@@ -13,13 +13,11 @@ export default function App() {
   const [index, setIndex] = useState(0);
 
   const renderScene = BottomNavigation.SceneMap({
-    dashboard: Dashboard,
     classify: Image,
     recycle: Recycle,
   });
 
   const [routes] = useState([
-    { key: "dashboard", title: "Home", focusedIcon: "home" },
     { key: "classify", title: "Classify", focusedIcon: "upload" },
     { key: "recycle", title: "Recycling", focusedIcon: "recycle" },
   ]);

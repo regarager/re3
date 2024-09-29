@@ -9,6 +9,7 @@ from flask import Flask, request
 from flask_cors import CORS, cross_origin
 
 import google.generativeai as genai
+import googlemaps
 
 load_dotenv(".env")
 
@@ -24,6 +25,7 @@ genai.configure(api_key=os.environ["GEMINI_KEY"])
 
 subprocess.call(["rm", "uploads/*"])
 
+api_key = os.environ["MAPS_KEY"]
 
 def upload_to_gemini(path, mime_type=None):
     """Uploads the given file to Gemini.
@@ -163,3 +165,42 @@ def reuse():
         .send_message(f"Generate a few ways to reuse {item}")
         .text.strip()
     )
+
+@app.route("/recenters", methods=["POST"])
+@cross_origin()
+def recenters():
+    stuff = json.loads(request.data)
+    latitude = stuff["latitude"]
+    longitude = stuff["longitude"]
+
+    markers = search_nearby_recycling_centers(api_key, latitude, longitude)
+
+    return json.dumps(markers, indent=4)
+
+def search_nearby_recycling_centers(api_key, latitude, longitude):
+    gmaps = googlemaps.Client(key=api_key)
+
+    try:
+        search_results = gmaps.places_nearby(
+            location=(latitude, longitude),
+            radius=20000,
+            keyword="recycling"
+        )
+        markers = []
+
+        for result in search_results['results']:
+            markers.append({
+                "coordinate": {
+                    "latitude": result['geometry']['location']['lat'],
+                    "longitude": result['geometry']['location']['lng']
+                },
+                "title": result['name'],
+                "description": result['vicinity'],
+                "place_id": result['place_id']
+            })
+
+        return markers
+
+    except Exception as e:
+        print("Error:", e, flush=True)
+        return []
