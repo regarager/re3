@@ -36,13 +36,16 @@ export default function Image() {
       if (image.length == 0) return;
 
       try {
-        const response = await fetch("http://10.0.2.2:5000/upload_image", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          "http://10.0.2.2:5000/upload_image",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ image }),
           },
-          body: JSON.stringify({ image }),
-        });
+        );
 
         if (response.ok) {
           const res = await response.text();
@@ -63,7 +66,10 @@ export default function Image() {
             setFilename(res);
           }
         } else {
-          console.error("Error uploading image:", response.statusText);
+          console.error(
+            "Error uploading image:",
+            response.statusText,
+          );
         }
       } catch (error) {
         console.error("Error:", error);
@@ -74,7 +80,7 @@ export default function Image() {
   }, [image]);
 
   useEffect(() => {
-    if (filename.length == 0) return;
+    if (filename.length === 0) return;
 
     const getResponses = async () => {
       await fetch("http://10.0.2.2:5000/identify", {
@@ -92,7 +98,10 @@ export default function Image() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ file: filename, item: itemType.content }),
+        body: JSON.stringify({
+          file: filename,
+          item: itemType.content,
+        }),
       })
         .then((res) => res.text())
         .then((res) => setReduce({ loaded: true, content: res }));
@@ -102,7 +111,10 @@ export default function Image() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ file: filename, item: itemType.content }),
+        body: JSON.stringify({
+          file: filename,
+          item: itemType.content,
+        }),
       })
         .then((res) => res.text())
         .then((res) => setReuse({ loaded: true, content: res }));
@@ -112,7 +124,10 @@ export default function Image() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ file: filename, item: itemType.content }),
+        body: JSON.stringify({
+          file: filename,
+          item: itemType.content,
+        }),
       })
         .then((res) => res.text())
         .then((res) => setRecycle({ loaded: true, content: res }));
@@ -176,8 +191,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
-    borderColor: "blue",
   },
 
   title: {
