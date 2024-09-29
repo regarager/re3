@@ -52,4 +52,4 @@ pip-selfcheck.json
 
 .env
 __pycache__
-uploads/*
+server/uploads/*
