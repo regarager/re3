@@ -92,9 +92,6 @@ const Recycle = () => {
           pinColor="blue"
         />
       </MapView>
-      <Button onPress={() => console.log(userLocation, nearbyPlaces)}>
-        asdf
-      </Button>
     </View>
   );
 };
