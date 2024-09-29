@@ -1,10 +1,10 @@
 import { View } from "react-native";
 import { Text } from "react-native-paper";
 
-export default function Reuse() {
+export default function Recycle() {
   return (
     <View>
-      <Text>Reuse</Text>
+      <Text>Reduce</Text>
     </View>
   );
 }

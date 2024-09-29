@@ -7,24 +7,21 @@ import {
 import { useState } from "react";
 import Dashboard from "./pages/Dashboard";
 import Image from "./pages/Image";
-import Reduce from "./pages/Reduce";
-import Reuse from "./pages/Reuse";
+import Recycle from "./pages/Recycle";
 
 export default function App() {
   const [index, setIndex] = useState(0);
 
   const renderScene = BottomNavigation.SceneMap({
     dashboard: Dashboard,
-    recycle: Image,
-    reduce: Reduce,
-    reuse: Reuse,
+    classify: Image,
+    recycle: Recycle,
   });
 
   const [routes] = useState([
     { key: "dashboard", title: "Home", focusedIcon: "home" },
-    { key: "recycle", title: "Recycle", focusedIcon: "recycle" },
-    { key: "reduce", title: "Reduce", focusedIcon: "arrow-collapse-all" },
-    { key: "reuse", title: "Reuse", focusedIcon: "sync-circle" },
+    { key: "classify", title: "Classify", focusedIcon: "upload" },
+    { key: "recycle", title: "Recycling", focusedIcon: "recycle" },
   ]);
 
   const theme = MD3DarkTheme;
